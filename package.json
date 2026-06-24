@@ -1,0 +1,23 @@
+{
+  "name": "mistral-potluck",
+  "version": "1.0.0",
+  "description": "Pot-Luck Registration Web App with Cloudflare R2 Storage",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "r2",
+    "potluck",
+    "registration"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

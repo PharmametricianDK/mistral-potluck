@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pot-Luck Registrering</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .instructions p {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .instructions strong {
+            color: #e74c3c;
+        }
+
+        .items-container {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .badge {
+            font-size: 0.8em;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .available .badge {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .reserved .badge {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .items-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .item:hover {
+            background: #e8f4fc;
+            border-color: #bdc3c7;
+        }
+
+        .item.reserved {
+            background: #fdf2f2;
+            border-color: #fadbd8;
+            opacity: 0.8;
+        }
+
+        .item input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .item-label {
+            flex: 1;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .item.reserved .item-label {
+            text-decoration: line-through;
+            color: #95a5a6;
+        }
+
+        .reserved-by {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .reservation-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-group input::placeholder {
+            color: #95a5a6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .buttons-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .new-item-section {
+            background: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .new-item-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .new-item-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .new-item-form input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-info {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ffc107;
+        }
+
+        .user-info p {
+            margin-bottom: 5px;
+            color: #856404;
+        }
+
+        .user-info strong {
+            color: #ff8c00;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .new-item-form {
+                flex-direction: column;
+            }
+
+            .new-item-form input {
+                width: 100%;
+            }
+
+            .buttons-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ Pot-Luck Registrering</h1>
+        <p class="subtitle">Registrer hvad du bringer til fællesspisingen</p>
+
+        <div class="instructions">
+            <p><strong>Sådan gør du:</strong></p>
+            <p>1. Vælg hvad du vil bringe fra listen nedenfor</p>
+            <p>2. Indtast dit navn</p>
+            <p>3. Klik på "Registrer" for at reservere din ret</p>
+            <p>4. Du kan tilføje nye retter, hvis der mangler noget</p>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Indlæser data...</p>
+        </div>
+
+        <div id="error" class="error-message" style="display: none;"></div>
+        <div id="success" class="success-message" style="display: none;"></div>
+
+        <div id="userInfo" class="user-info" style="display: none;">
+            <p><strong>Du har valgt:</strong> <span id="selectedItem"></span></p>
+            <p><strong>Dit navn:</strong> <span id="userName"></span></p>
+        </div>
+
+        <div class="items-container">
+            <h2 class="section-title available">
+                Tilgængelige retter
+                <span class="badge" id="availableCount">0</span>
+            </h2>
+            <div id="availableItems" class="items-list"></div>
+        </div>
+
+        <div class="items-container">
+            <h2 class="section-title reserved">
+                Allerede reserverede retter
+                <span class="badge" id="reservedCount">0</span>
+            </h2>
+            <div id="reservedItems" class="items-list"></div>
+        </div>
+
+        <div class="new-item-section">
+            <h3>💡 Tilføj ny ret</h3>
+            <div class="new-item-form">
+                <input type="text" id="newItemInput" placeholder="Indtast navnet på den nye ret...">
+                <button class="btn btn-secondary" onclick="addNewItem()">Tilføj ret</button>
+            </div>
+        </div>
+
+        <div class="reservation-form">
+            <div class="form-group">
+                <label for="nameInput">Dit navn:</label>
+                <input type="text" id="nameInput" placeholder="Indtast dit navn...">
+            </div>
+            <div class="buttons-group">
+                <button class="btn btn-primary" onclick="registerItem()">Registrer valgt ret</button>
+                <button class="btn btn-danger" onclick="cancelRegistration()" style="display: none;" id="cancelBtn">Annuller reservation</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
