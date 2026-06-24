@@ -1,22 +1,67 @@
 # Pot-Luck Registrering 🍽️
 
-En simpel web-applikation til registrering af hvad folk bringer til en fællesspising (pot-luck). Ingen login nødvendig - bare vælg hvad du bringer og indtast dit navn!
+En simpel web-applikation til registrering af hvad folk bringer til en fællesspising (pot-luck). **Ingen login nødvendig** - bare vælg hvad du bringer og indtast dit navn!
 
-## Features
+## 🚀 Hurtig Start (Worker Version)
 
-- ✅ **Ingen login krævet** - Åben for alle
-- ✅ **Tilføj nye retter** - Gæster kan tilføje manglende retter
-- ✅ **Reserver system** - Vælg hvad du bringer og se hvad andre har valgt
-- ✅ **Automatisk sortering** - Tilgængelige retter øverst, reserverede nederst
-- ✅ **Dansk sprog** - Alt indhold er på dansk
-- ✅ **LocalStorage backup** - Data gemmes lokalt som backup
-- ✅ **Cloudflare R2 integration** - Persistent storage via Cloudflare R2
+### 1. Opret R2 Bucket
+- Gå til [Cloudflare Dashboard](https://dash.cloudflare.com/)
+- Vælg **R2** → **Create bucket**
+- Navn: `potluck-data`
+- Klik **Create**
 
-## Hurtig start
+### 2. Deploy Worker
 
-### 1. Rediger retterne
+**Metode A: Via Wrangler CLI (anbefalet)**
+```bash
+# Installer wrangler
+npm install -g wrangler
 
-Åbn filen `app.js` og rediger `DEFAULT_ITEMS` arrayet for at tilpasse listen af retter til din begivenhed:
+# Login til Cloudflare
+wrangler login
+
+# Deploy Worker
+wrangler deploy
+```
+
+**Metode B: Via Cloudflare Dashboard**
+1. Gå til **Workers & Pages** → **Workers**
+2. Klik **Create service** → **Create Worker**
+3. Navn: `mistral-potluck`
+4. Kopier indholdet af `worker.js`
+5. Under **Settings** → **Variables**, tilføj R2 binding:
+   - Variable name: `POTLUCK_DATA`
+   - R2 bucket: `potluck-data`
+6. Klik **Save and Deploy**
+
+### 3. Test
+- Åbn din Worker URL (f.eks. `https://mistral-potluck.YOUR_SUBDOMAIN.workers.dev`)
+- Du burde se registreringsformularen
+- Prøv at tilføje en reservation
+
+## 📁 Filstruktur
+
+```
+mistral-potluck/
+├── worker.js           # Alt-i-en Worker (HTML, JS, API, R2)
+├── wrangler.toml       # Worker konfiguration
+├── package.json        # Node.js dependencies
+└── README.md           # Denne fil
+```
+
+## 🎯 Features
+
+✅ **Ingen login krævet** - Åben for alle  
+✅ **Tilføj nye retter** - Gæster kan tilføje manglende retter  
+✅ **Reserver system** - Vælg hvad du bringer og se hvad andre har valgt  
+✅ **Automatisk sortering** - Tilgængelige retter øverst, reserverede nederst  
+✅ **Dansk sprog** - Alt indhold er på dansk  
+✅ **LocalStorage backup** - Data gemmes lokalt som backup  
+✅ **Cloudflare R2 storage** - Persistent data på tværs af brugere  
+
+## 📝 Rediger Retter
+
+Åbn `worker.js` og find `DEFAULT_ITEMS` arrayet (linje ~10-30):
 
 ```javascript
 const DEFAULT_ITEMS = [
@@ -25,84 +70,32 @@ const DEFAULT_ITEMS = [
     "Hovedret: Lasagne",
     "Tilbehør: Salat",
     "Dessert: Kage",
-    "Drikke: Saft",
-    "Drikke: Vand"
+    // Tilføj eller fjern retter her
 ];
 ```
 
-### 2. Deploy til Cloudflare Pages
+Ændringer træder i kraft når du redeployer Worker'en.
 
-1. **Opret et nyt Cloudflare Pages projekt**
-   - Gå til [Cloudflare Dashboard](https://dash.cloudflare.com/)
-   - Vælg "Pages" i venstre menu
-   - Klik "Create application" → "Connect GitHub account"
-   - Vælg dette repository
-
-2. **Konfigurer build indstillinger**
-   - **Project name**: `mistral-potluck`
-   - **Production branch**: `main`
-   - **Build command**: (lad stå tomt)
-   - **Build output directory**: (lad stå tomt)
-   - Klik "Save and Deploy"
-
-3. **Opret R2 bucket**
-   - Gå til "R2" i Cloudflare Dashboard
-   - Klik "Create bucket"
-   - Navn: `potluck-data`
-   - Klik "Create"
-
-4. **Opret Worker for API**
-   - Gå til "Workers & Pages" → "Workers"
-   - Klik "Create service" → "Create Worker"
-   - Navn: `potluck-api`
-   - Upload `worker.js` filen
-   - Konfigurer R2 binding:
-     ```toml
-     [[r2_buckets]]
-     binding = "potluck-data"
-     bucket_name = "potluck-data"
-     ```
-   - Deploy Worker
-
-5. **Opdater API URL i frontend**
-   - I `app.js`, ændr `API_BASE_URL` til din Workers URL:
-   ```javascript
-   const API_BASE_URL = 'https://potluck-api.YOUR_SUBDOMAIN.workers.dev';
-   ```
-
-### 3. Alternativ: Kun statisk hosting (uden R2)
-
-Hvis du ikke ønsker at bruge R2, kan du blot deploye de statiske filer (`index.html` og `app.js`) til enhver webhosting. Data vil blive gemt i browserens localStorage, men vil ikke være synkroniseret på tværs af enheder.
-
-## Filstruktur
-
-```
-mistral-potluck/
-├── index.html          # Hoved HTML side
-├── app.js              # Frontend JavaScript (rediger DEFAULT_ITEMS her)
-├── worker.js           # Cloudflare Worker for R2 API
-├── wrangler.toml       # Worker konfiguration
-├── package.json        # Node.js dependencies
-└── README.md           # Denne fil
-```
-
-## Brugervejledning
+## 👥 Brugervejledning
 
 ### For gæster:
-1. **Vælg en ret** - Klik på den ret du vil bringe
+1. **Vælg en ret** - Klik på den ret du vil bringe fra listen
 2. **Indtast dit navn** - Skriv dit navn i feltet
 3. **Registrer** - Klik "Registrer valgt ret"
 4. **Tilføj ny ret** (valgfrit) - Hvis der mangler noget, kan du tilføje det
 
 ### For arrangør:
-1. **Rediger retter** - Ændr `DEFAULT_ITEMS` i `app.js`
-2. **Deploy** - Push ændringer til GitHub for automatisk deployment
+1. **Rediger retter** - Ændr `DEFAULT_ITEMS` i `worker.js`
+2. **Deploy** - `wrangler deploy` eller redeploy via Dashboard
 3. **Se reservationer** - Reserverede retter vises nederst med navne
+4. **Nulstil data** - Slet filerne `items.json` og `reservations.json` i R2 bucket
 
-## Tekniske detaljer
+## 🔧 Tekniske Detaljer
 
 ### Data Storage
-- **Primær**: Cloudflare R2 (persistent, delt på tværs af brugere)
+- **Primær**: Cloudflare R2 bucket (`potluck-data`)
+  - `items.json` - Liste af alle retter
+  - `reservations.json` - Alle reservationer
 - **Backup**: Browser localStorage (kun på den enkelte enhed)
 
 ### API Endpoints
@@ -111,37 +104,45 @@ mistral-potluck/
 - `POST /api/reservations` - Gem reservationer
 
 ### Sikkerhed
-- Ingen authentication nødvendig
+- Ingen authentication nødvendig (åben adgang)
 - XSS beskyttelse via `escapeHtml()` funktion
-- CORS headers konfigureret i Worker
+- CORS headers konfigureret
 
-## Fejlfinding
+## 🐛 Fejlfinding
 
-### Problemer med R2?
-- Kontroller at bucket navnet matcher i `worker.js`
-- Kontroller at R2 binding er korrekt konfigureret i Worker
+### "Nothing shows up" / "Development mode message"
+**Problem**: Du ser kun "// Development mode - File: index.html"
+
+**Løsning**: 
+- Du har sandsynligvis deployed til **Cloudflare Pages** i stedet for **Workers**
+- **Pages** kan ikke køre Worker-kode
+- **Løsning**: Deploy som Worker (se Hurtig Start ovenfor)
+
+### Data gemmes ikke
+- Kontroller at R2 bucket hedder `potluck-data`
+- Kontroller at R2 binding i wrangler.toml hedder `POTLUCK_DATA`
 - Tjek Cloudflare Dashboard for fejlmeddelelser
 
-### Data vises ikke?
-- Prøv at refresh siden (Ctrl+F5)
-- Tjek browser console for fejl
-- Kontroller at Worker er deployed korrekt
+### Ændringer vises ikke
+- Redeploy Worker: `wrangler deploy`
+- Clear browser cache (Ctrl+Shift+R)
+- Tjek at du har redigeret den rigtige fil
 
-### Ændringer gemmes ikke?
-- Kontroller at API_BASE_URL i `app.js` peger på den rigtige Worker URL
-- Tjek at Worker har de korrekte R2 tilladelser
+### R2 fejl
+- Kontroller at bucket eksisterer
+- Kontroller at binding navnet matcher
+- Tjek at Worker har tilladelse til at skrive til R2
 
-## Bidrag
+## 📄 Alternativ: Kun Statisk (uden R2)
 
-Følg disse steps for at bidrage:
+Hvis du ikke ønsker at bruge R2, kan du:
 
-1. Fork dette repository
-2. Opret en feature branch (`git checkout -b feature/ny-funktion`)
-3. Commit dine ændringer (`git commit -am 'Tilføj ny funktion'`)
-4. Push til branch (`git push origin feature/ny-funktion`)
-5. Opret en Pull Request
+1. Ekstraher HTML og JS fra `worker.js` (linje ~35-200)
+2. Gem som separate filer (`index.html` og `app.js`)
+3. Deploy til enhver statisk hosting (Cloudflare Pages, GitHub Pages, etc.)
+4. Data vil kun blive gemt i browserens localStorage
 
-## Licens
+## 📜 Licens
 
 MIT License - Frit til brug, modificering og distribution.
 

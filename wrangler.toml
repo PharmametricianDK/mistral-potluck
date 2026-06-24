@@ -2,25 +2,11 @@ name = "mistral-potluck"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
-# R2 Bucket configuration
+# R2 Bucket configuration - THIS IS REQUIRED
+# Create an R2 bucket named "potluck-data" in your Cloudflare account first
 [[r2_buckets]]
-binding = "potluck-data"
+binding = "POTLUCK_DATA"
 bucket_name = "potluck-data"
 
-# For local development
-[dev]
-local = true
-
-# For production deployment
-# Uncomment and configure the following for production:
+# For production deployment, uncomment and set your account ID:
 # account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
-# workers_dev = true
-
-# KV namespace (optional, for additional storage)
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "YOUR_KV_NAMESPACE_ID"
-
-# Variables (optional)
-# [vars]
-# ENVIRONMENT = "production"
