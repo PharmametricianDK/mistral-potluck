@@ -1,5 +1,6 @@
-# Cloudflare Pages configuration
-# This file is for Pages Functions with R2
+name = "mistral-potluck"
+main = "worker.js"
+compatibility_date = "2024-01-01"
 
 # R2 Bucket configuration
 [[r2_buckets]]
